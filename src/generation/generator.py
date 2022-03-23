@@ -1,4 +1,6 @@
 import importlib
+
+
 class Generator():
     def __init__(self, width, height):
         self.load_algorithm("dfs")
@@ -25,5 +27,3 @@ class Generator():
         for i in range(self.height // 2):
             for j in range(self.width // 2):
                 self.maze[i][j] = False
-
-    
