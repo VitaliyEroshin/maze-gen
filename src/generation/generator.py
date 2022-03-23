@@ -3,20 +3,20 @@ import importlib
 
 class Generator():
     def __init__(self, width, height):
-        self.load_algorithm("dfs")
         self.resize(width, height)
-
+        self.load_algorithm("algorithms.kruskal")
+        
 
     def resize(self, width, height):
         self.width = width
         self.height = height
         self.maze = [[False] * (width // 2) for _ in range(height // 2)]
-        self.algo.resize(width, height)
-
+        
 
     def load_algorithm(self, path):
         try:
-            self.algo = importlib.import_module("algorithms." + path)
+            self.algo = importlib.import_module(path)
+            self.algo.resize(self.width, self.height)
             
         except ImportError:
             print("No module found")
