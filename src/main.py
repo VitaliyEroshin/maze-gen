@@ -6,6 +6,7 @@ import time
 
 class MazeGenerator():
     def __init__(self, window_width, window_height, scale):
+        self.status ='idle'
         self.scale = scale
         self.window_width = window_width
         self.window_height = window_height
@@ -48,26 +49,30 @@ class MazeGenerator():
         self.make_button(self.frame, "Stop", self.stop)
         self.make_button(self.frame, "Reset", self.reset)
         self.make_button(self.frame, "Save", self.save)
+        self.make_button(self.frame, "Play", self.play)
+        self.frame.bind('<KeyPress>', self.key_handler)
+        self.frame.focus_set()
         self.frame.pack(side="top")
 
 
     def draw_cell(self, x, y):
         self.canvas.create_rectangle(
-            x + self.scale, y + self.scale, 
-            x + 2 * self.scale, y + 2 * self.scale, 
+            (x + 1) * self.scale, (y + 1) * self.scale, 
+            (x + 2) * self.scale, (y + 2) * self.scale, 
             outline="#a3fff6", 
             fill="#a3fff6"
         )
 
 
     def start(self):
-        self.running = True
-        self.level = [[False] * (self.cells_width - 1) for _ in range(self.cells_height - 1)] 
+        self.status = 'running'
+        self.level = [[False] * (self.cells_width - 1) for _ in range(self.cells_height - 1)]
+        self.reset()
         self.go()
 
 
     def stop(self):
-        self.running = False
+        self.status = 'idle'
 
 
     def reset(self):
@@ -95,17 +100,64 @@ class MazeGenerator():
 
 
     def go(self):
-        if not self.running:
+        if self.status != 'running':
             return
 
         try:
             pos = next(self.it)
-            self.draw_cell(pos[1] * self.scale, pos[0] * self.scale)
+            self.draw_cell(pos[1], pos[0])
             self.level[pos[0] + 1][pos[1] + 1] = True
             self.canvas.update()
             self.root.after(5, self.go)
         except StopIteration:
             self.running = False
+
+
+    def move_player(self, x, y):
+        if not self.level[y + 1][x + 1]:
+            print("Prohibited! (", x + 1, y + 1, ")")
+            return
+
+        if self.icon:
+            self.canvas.delete(self.icon)
+
+        self.canvas.create_rectangle(
+            (x + 1) * self.scale, (y + 1) * self.scale, 
+            (x + 2) * self.scale, (y + 2) * self.scale, 
+            outline="#362700", 
+            fill="#362700"
+        )
+        
+        self.icon = self.canvas.create_rectangle(
+            (x + 1) * self.scale, (y + 1) * self.scale, 
+            (x + 2) * self.scale, (y + 2) * self.scale, 
+            outline="#fcba03", 
+            fill="#fcba03"
+        )
+
+        self.player = [x, y]
+
+
+    def play(self):
+        self.status = 'playing'
+        self.player = None
+        self.icon = None
+        self.move_player(0, 0)
+
+    def key_handler(self, key):
+        if self.status == 'playing':
+            self.player_move_handler(key)
+        
+    
+    def player_move_handler(self, key):
+        if key.keysym == 'Left':
+            self.move_player(self.player[0] - 1, self.player[1])
+        elif key.keysym == 'Right':
+            self.move_player(self.player[0] + 1, self.player[1])
+        elif key.keysym == 'Up':
+            self.move_player(self.player[0], self.player[1] - 1)
+        elif key.keysym == 'Down':
+            self.move_player(self.player[0], self.player[1] + 1)
 
 
 g = MazeGenerator(640, 480, 16)
