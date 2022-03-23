@@ -52,17 +52,18 @@ def algorithm(maze):
 
     random.shuffle(vertices_set)
 
-    for vertex in vertices_set:
-        delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
-        random.shuffle(delta)
-        for d in delta:
-            neighbor = [vertex[0] + d[0], vertex[1] + d[1]]
-            if not correct(neighbor):
-                continue
+    while dsu.num_sets != 1:
+        for vertex in vertices_set:
+            delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
+            random.shuffle(delta)
+            for d in delta:
+                neighbor = [vertex[0] + d[0], vertex[1] + d[1]]
+                if not correct(neighbor):
+                    continue
 
-            if dsu.find(vertex[0], vertex[1]) != dsu.find(neighbor[0], neighbor[1]):
-                dsu.union(vertex, neighbor)
-                yield [2 * vertex[0], 2 * vertex[1]]
-                yield [2 * vertex[0] + d[0], 2 * vertex[1] + d[1]]
-                yield [2 * (vertex[0] + d[0]), 2 * (vertex[1] + d[1])]
-                break
+                if dsu.find(vertex[0], vertex[1]) != dsu.find(neighbor[0], neighbor[1]):
+                    dsu.union(vertex, neighbor)
+                    yield [2 * vertex[0], 2 * vertex[1]]
+                    yield [2 * vertex[0] + d[0], 2 * vertex[1] + d[1]]
+                    yield [2 * (vertex[0] + d[0]), 2 * (vertex[1] + d[1])]
+                    break
