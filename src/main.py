@@ -50,6 +50,8 @@ class MazeGenerator():
         self.make_button(self.frame, "Reset", self.reset)
         self.make_button(self.frame, "Save", self.save)
         self.make_button(self.frame, "Play", self.play)
+        self.make_button(self.frame, "Algorithm", self.change_algorithm)
+
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
         self.frame.pack(side="top")
@@ -158,6 +160,13 @@ class MazeGenerator():
             self.move_player(self.player[0], self.player[1] - 1)
         elif key.keysym == 'Down':
             self.move_player(self.player[0], self.player[1] + 1)
+
+    
+    def change_algorithm(self):
+        if self.generator.algo.__name__ == 'algorithms.kruskal':
+            self.generator.load_algorithm('algorithms.dfs')
+        else:
+            self.generator.load_algorithm('algorithms.kruskal')
 
 
 g = MazeGenerator(640, 480, 16)
