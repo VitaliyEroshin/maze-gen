@@ -3,9 +3,11 @@ import random
 def correct(x, y):
     return x < correct.height and x >= 0 and y < correct.width and y >= 0
 
+
 def resize(width, height):
     correct.width = width
     correct.height = height
+
 
 def algorithm(maze, x=0, y=0, seed=0):
     maze[x // 2][y // 2] = True
