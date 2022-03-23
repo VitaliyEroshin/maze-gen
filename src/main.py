@@ -51,6 +51,7 @@ class MazeGenerator():
         self.make_button(self.frame, "Save", self.save)
         self.make_button(self.frame, "Play", self.play)
         self.make_button(self.frame, "Algorithm", self.change_algorithm)
+        self.make_button(self.frame, "Path", self.find_path)
 
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
@@ -117,7 +118,6 @@ class MazeGenerator():
 
     def move_player(self, x, y):
         if not self.level[y + 1][x + 1]:
-            print("Prohibited! (", x + 1, y + 1, ")")
             return
 
         if self.icon:
@@ -168,6 +168,35 @@ class MazeGenerator():
             self.generator.load_algorithm('algorithms.dfs')
         else:
             self.generator.load_algorithm('algorithms.kruskal')
+
+
+    def find_path(self, x=1, y=1, parentx=0, parenty=0):
+        way = self.canvas.create_rectangle(
+            (x) * self.scale, (y) * self.scale, 
+            (x + 1) * self.scale, (y + 1) * self.scale, 
+            outline="#00ad37", 
+            fill="#00ad37"
+        )
+
+        if x == self.cells_width - 3 and y == self.cells_height - 3:
+            return True
+
+        delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
+        for d in delta:
+            nx = x + d[0]
+            ny = y + d[1]
+
+            if nx == parentx and ny == parenty:
+                continue
+
+            if not self.level[ny][nx]:
+                continue
+            
+            if (self.find_path(nx, ny, x, y)):
+                return True
+    
+        self.canvas.delete(way)
+        return False
 
 
 g = MazeGenerator(640, 480, 16)
