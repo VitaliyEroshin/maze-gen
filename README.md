@@ -1,0 +1,1 @@
+# mipt-maze-generator
