@@ -3,6 +3,7 @@ import tkinter as tk
 import tkinter.filedialog
 import time
 
+
 class MazeGenerator():
     def __init__(self, window_width, window_height, scale):
         self.scale = scale
@@ -18,6 +19,7 @@ class MazeGenerator():
         self.it = self.generator.generate()
         self.root.mainloop()
 
+
     def make_button(self, frame, text, command):
         return tk.Button(
             frame,
@@ -27,6 +29,7 @@ class MazeGenerator():
             height=1,
             width=7
         ).pack(side="top")
+
 
     def setup_window(self):
         self.root = tk.Tk()
@@ -47,6 +50,7 @@ class MazeGenerator():
         self.make_button(self.frame, "Save", self.save)
         self.frame.pack(side="top")
 
+
     def draw_cell(self, x, y):
         self.canvas.create_rectangle(
             x + self.scale, y + self.scale, 
@@ -55,18 +59,22 @@ class MazeGenerator():
             fill="#a3fff6"
         )
 
+
     def start(self):
         self.running = True
         self.level = [[False] * (self.cells_width - 1) for _ in range(self.cells_height - 1)] 
         self.go()
 
+
     def stop(self):
         self.running = False
+
 
     def reset(self):
         self.it = self.generator.generate()
         self.generator.clear()
         self.canvas.delete('all')
+
 
     def save(self):
         path = tk.filedialog.asksaveasfilename(
@@ -84,6 +92,7 @@ class MazeGenerator():
                     else:
                         pretty_row.append('#')
                 f.write(''.join(pretty_row) + '\n')
+
 
     def go(self):
         if not self.running:
