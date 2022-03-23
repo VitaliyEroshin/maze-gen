@@ -146,11 +146,12 @@ class MazeGenerator():
         self.icon = None
         self.move_player(0, 0)
 
+
     def key_handler(self, key):
         if self.status == 'playing':
             self.player_move_handler(key)
-        
-    
+
+
     def player_move_handler(self, key):
         if key.keysym == 'Left':
             self.move_player(self.player[0] - 1, self.player[1])

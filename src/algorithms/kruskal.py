@@ -1,12 +1,15 @@
 import random
 
+
 def correct(position):
     return position[0] < correct.height and position[0] >= 0 \
         and position[1] < correct.width and position[1] >= 0
 
+
 def resize(width, height):
     correct.width = width
     correct.height = height
+
 
 class DisjointSet2D:
     def __init__(self, width, height):
@@ -18,6 +21,7 @@ class DisjointSet2D:
 
         self.num_sets = height * width
 
+
     def find(self, i, j):
         if self.set[i][j] != [i, j]:
             pos = self.find(self.set[i][j][0], self.set[i][j][1])
@@ -25,6 +29,7 @@ class DisjointSet2D:
             return pos
         else:
             return [i, j]
+
 
     def union(self, first, second):
         first_set = self.find(first[0], first[1])

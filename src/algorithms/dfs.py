@@ -1,5 +1,6 @@
 import random
 
+
 def correct(x, y):
     return x < correct.height and x >= 0 and y < correct.width and y >= 0
 
