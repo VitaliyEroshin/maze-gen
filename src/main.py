@@ -55,6 +55,7 @@ class MazeGenerator():
         self.root = tk.Tk()
         self.root.title("Maze generator")
         self.root.configure(background="#242424")
+
         self.canvas = tk.Canvas(
             self.root, 
             height=self.window_height, 
@@ -62,6 +63,7 @@ class MazeGenerator():
             background="#333333",
             highlightbackground="black"
         )
+
         self.canvas.pack(side="right")
         self.frame = tk.Frame(self.root, padx=10, pady=10, background="#242424")
         self.make_button(self.frame, "Run", self.start)
@@ -72,6 +74,42 @@ class MazeGenerator():
         self.make_button(self.frame, "Algorithm", self.change_algorithm)
         self.make_button(self.frame, "Path", self.find_path)
 
+        self.wall_thick = tk.Scale(
+            self.frame,
+            from_=4,
+            to=32,
+            orient="horizontal",
+            resolution=1,
+            length=64,
+            background="#242424",
+            width=8
+        )
+
+        self.way_thick = tk.Scale(
+            self.frame,
+            from_=8,
+            to=32,
+            orient="horizontal",
+            resolution=1,
+            length=64,
+            background="#242424",
+            width=8
+        )
+
+        self.speed_scale = tk.Scale(
+            self.frame,
+            from_=0,
+            to=8,
+            orient="horizontal",
+            resolution=1,
+            length=64,
+            background="#242424",
+            width=8
+        )
+    
+        self.wall_thick.pack()
+        self.way_thick.pack()
+        self.speed_scale.pack()
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
         self.frame.pack(side="top")
@@ -82,12 +120,14 @@ class MazeGenerator():
             (x + 1) * self.scale, (y + 1) * self.scale, 
             (x + 3) * self.scale - self.wall_thickness, 
             (y + 3) * self.scale - self.wall_thickness, 
-            outline="#a3fff6", 
-            fill="#a3fff6"
+            outline="#ffffff", 
+            fill="#ffffff"
         )
 
 
     def start(self):
+        self.init_settings(self.wall_thick.get(), self.way_thick.get())
+        self.resize_canvas(self.window_width, self.window_height)
         self.status = 'running'
         self.level = [[False] * (self.cells_width - 1) for _ in range(self.cells_height - 1)]
         self.reset()
@@ -131,7 +171,7 @@ class MazeGenerator():
             self.draw_cell(pos[1], pos[0])
             self.level[pos[0] + 1][pos[1] + 1] = True
             self.canvas.update()
-            self.root.after(5, self.go)
+            self.root.after(self.speed_scale.get(), self.go)
         except StopIteration:
             self.status = 'idle'
 
@@ -166,6 +206,7 @@ class MazeGenerator():
         self.status = 'playing'
         self.player = None
         self.icon = None
+        self.init_settings(self.wall_thick)
         self.move_player(0, 0)
 
 
