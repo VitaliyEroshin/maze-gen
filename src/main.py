@@ -36,7 +36,7 @@ class MazeGenerator():
 
     def init_settings(self, wall_thickness, way_thickness):
         self.wall_thickness = wall_thickness
-        self.way_thickness = way_thickness
+        self.way_thickness = max(way_thickness, wall_thickness)
         self.scale = (self.wall_thickness + self.way_thickness) // 2
         
 
@@ -76,7 +76,7 @@ class MazeGenerator():
 
         self.wall_thick = tk.Scale(
             self.frame,
-            from_=4,
+            from_=2,
             to=32,
             orient="horizontal",
             resolution=1,
@@ -87,7 +87,7 @@ class MazeGenerator():
 
         self.way_thick = tk.Scale(
             self.frame,
-            from_=8,
+            from_=2,
             to=32,
             orient="horizontal",
             resolution=1,
@@ -129,7 +129,7 @@ class MazeGenerator():
         self.init_settings(self.wall_thick.get(), self.way_thick.get())
         self.resize_canvas(self.window_width, self.window_height)
         self.status = 'running'
-        self.level = [[False] * (self.cells_width - 1) for _ in range(self.cells_height - 1)]
+        self.level = [[False] * (self.cells_width - 2) for _ in range(self.cells_height - 2)]
         self.reset()
         self.go()
 
@@ -206,7 +206,6 @@ class MazeGenerator():
         self.status = 'playing'
         self.player = None
         self.icon = None
-        self.init_settings(self.wall_thick)
         self.move_player(0, 0)
 
 
