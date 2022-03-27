@@ -15,14 +15,21 @@ class MazeGenerator():
 
         self.setup_window()
 
-        self.it = self.generator.generate()
         self.canvas.bind("<Configure>", self.on_resize)
         self.root.mainloop()
 
 
     def on_resize(self, event):
-        self.canvas.config(width=(self.root.winfo_width() - 93), height=(self.root.winfo_height() - 6))
-        self.resize_canvas(self.canvas.winfo_width(), self.canvas.winfo_height())
+        self.canvas.config(
+            width=(self.root.winfo_width() - 93), 
+            height=(self.root.winfo_height() - 6)
+        )
+
+        self.resize_canvas(
+            self.canvas.winfo_width(), 
+            self.canvas.winfo_height()
+        )
+        
         self.reset()
 
 
@@ -31,6 +38,7 @@ class MazeGenerator():
         self.window_height = window_height
         self.cells_width = (window_width + self.wall_thickness) // self.scale
         self.cells_height = (window_height + self.wall_thickness) // self.scale
+
         self.generator.resize(self.cells_width - 2, self.cells_height - 2)
 
 
@@ -39,19 +47,29 @@ class MazeGenerator():
         self.way_thickness = max(way_thickness, wall_thickness)
         self.scale = (self.wall_thickness + self.way_thickness) // 2
         
-
-    def make_button(self, frame, text, command):
-        return tk.Button(
-            frame,
-            text=text,
-            command=command,
-            highlightbackground="#242424",
-            height=1,
-            width=7
-        ).pack(side="top")
-
-
     def setup_window(self):
+        def make_button(text, command):
+            return tk.Button(
+                self.frame,
+                text=text,
+                command=command,
+                highlightbackground="#242424",
+                height=1,
+                width=7
+            ).pack(side="top")
+
+        def make_scaler(minimum, maximum):
+            return tk.Scale(
+                self.frame,
+                from_=minimum,
+                to=maximum,
+                orient="horizontal",
+                resolution=1,
+                length=64,
+                background="#242424",
+                width=8
+            )
+
         self.root = tk.Tk()
         self.root.title("Maze generator")
         self.root.configure(background="#242424")
@@ -66,50 +84,23 @@ class MazeGenerator():
 
         self.canvas.pack(side="right")
         self.frame = tk.Frame(self.root, padx=10, pady=10, background="#242424")
-        self.make_button(self.frame, "Run", self.start)
-        self.make_button(self.frame, "Stop", self.stop)
-        self.make_button(self.frame, "Reset", self.reset)
-        self.make_button(self.frame, "Save", self.save)
-        self.make_button(self.frame, "Play", self.play)
-        self.make_button(self.frame, "Algorithm", self.change_algorithm)
-        self.make_button(self.frame, "Path", self.find_path)
 
-        self.wall_thick = tk.Scale(
-            self.frame,
-            from_=2,
-            to=32,
-            orient="horizontal",
-            resolution=1,
-            length=64,
-            background="#242424",
-            width=8
-        )
+        make_button("Run", self.start)
+        make_button("Stop", self.stop)
+        make_button("Reset", self.reset)
+        make_button("Save", self.save)
+        make_button("Play", self.play)
+        make_button("Algorithm", self.change_algorithm)
+        make_button("Path", self.find_path)
 
-        self.way_thick = tk.Scale(
-            self.frame,
-            from_=2,
-            to=32,
-            orient="horizontal",
-            resolution=1,
-            length=64,
-            background="#242424",
-            width=8
-        )
+        self.wall_thick = make_scaler(2, 32)
+        self.way_thick = make_scaler(2, 32)
+        self.speed_scale = make_scaler(0, 10)
 
-        self.speed_scale = tk.Scale(
-            self.frame,
-            from_=0,
-            to=10,
-            orient="horizontal",
-            resolution=1,
-            length=64,
-            background="#242424",
-            width=8
-        )
-    
         self.wall_thick.pack()
         self.way_thick.pack()
         self.speed_scale.pack()
+        
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
         self.frame.pack(side="top")
