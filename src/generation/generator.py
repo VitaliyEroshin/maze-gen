@@ -2,17 +2,17 @@ from importlib import import_module
 from importlib.machinery import SourceFileLoader
 
 class Generator():
-    def __init__(self, width, height):
-        self.resize(width, height)
+    def __init__(self):
+        self.width = 27
+        self.height = 20
         self.algo = import_module('algorithms.dfs')
-        self.algo.resize(self.width, self.height)
 
 
     def resize(self, width, height):
         self.width = width // 2
         self.height = height // 2
         self.maze = [[False] * (width // 2) for _ in range(height // 2)]
-        print(len(self.maze), 'x', len(self.maze[0]))
+        self.algo.resize(self.width, self.height)
 
 
     def load_algorithm(self, path):
@@ -30,6 +30,6 @@ class Generator():
 
 
     def clear(self):
-        for i in range(self.height // 2):
-            for j in range(self.width // 2):
+        for i in range(self.height):
+            for j in range(self.width):
                 self.maze[i][j] = False

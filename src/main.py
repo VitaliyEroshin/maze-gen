@@ -7,24 +7,37 @@ import time
 class MazeGenerator():
     def __init__(self, window_width, window_height, scale):
         self.status ='idle'
-        self.init_settings(window_width, window_height)
 
-        self.generator = Generator(self.cells_width - 2, self.cells_height - 2)
+        self.generator = Generator()
+
+        self.init_settings(16, 32)
+        self.resize_canvas(window_width, window_height)
 
         self.setup_window()
 
         self.it = self.generator.generate()
+        self.canvas.bind("<Configure>", self.on_resize)
         self.root.mainloop()
 
-    
-    def init_settings(self, window_width, window_height):
-        self.wall_thickness = 16
-        self.way_thickness = 24
-        self.scale = (self.wall_thickness + self.way_thickness) // 2
+
+    def on_resize(self, event):
+        self.canvas.config(width=(self.root.winfo_width() - 93), height=(self.root.winfo_height() - 6))
+        self.resize_canvas(self.canvas.winfo_width(), self.canvas.winfo_height())
+        self.reset()
+
+
+    def resize_canvas(self, window_width, window_height):
         self.window_width = window_width
         self.window_height = window_height
         self.cells_width = (window_width + self.wall_thickness) // self.scale
         self.cells_height = (window_height + self.wall_thickness) // self.scale
+        self.generator.resize(self.cells_width - 2, self.cells_height - 2)
+
+
+    def init_settings(self, wall_thickness, way_thickness):
+        self.wall_thickness = wall_thickness
+        self.way_thickness = way_thickness
+        self.scale = (self.wall_thickness + self.way_thickness) // 2
         
 
     def make_button(self, frame, text, command):
@@ -120,7 +133,7 @@ class MazeGenerator():
             self.canvas.update()
             self.root.after(5, self.go)
         except StopIteration:
-            self.running = False
+            self.status = 'idle'
 
 
     def move_player(self, x, y):
