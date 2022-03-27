@@ -99,7 +99,7 @@ class MazeGenerator():
         self.speed_scale = tk.Scale(
             self.frame,
             from_=0,
-            to=8,
+            to=10,
             orient="horizontal",
             resolution=1,
             length=64,
@@ -167,12 +167,14 @@ class MazeGenerator():
             return
 
         try:
-            pos = next(self.it)
-            self.draw_cell(pos[1], pos[0])
-            self.level[pos[0] + 1][pos[1] + 1] = True
+            for i in range(2 ** self.speed_scale.get()):
+                pos = next(self.it)
+                self.draw_cell(pos[1], pos[0])
+                self.level[pos[0] + 1][pos[1] + 1] = True
+                
             self.canvas.update()
-            self.root.after(self.speed_scale.get(), self.go)
-        except StopIteration:
+            self.root.after(1, self.go)
+        except:
             self.status = 'idle'
 
 
