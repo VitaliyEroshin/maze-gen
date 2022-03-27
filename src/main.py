@@ -100,7 +100,7 @@ class MazeGenerator():
         self.wall_thick.pack()
         self.way_thick.pack()
         self.speed_scale.pack()
-        
+
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
         self.frame.pack(side="top")
@@ -247,6 +247,9 @@ class MazeGenerator():
             if nx == parentx and ny == parenty:
                 continue
 
+            if ny == len(self.level) or nx == len(self.level[0]):
+                continue
+            
             if not self.level[ny][nx]:
                 continue
             
