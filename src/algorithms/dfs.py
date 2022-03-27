@@ -23,7 +23,7 @@ def algorithm(maze, x=0, y=0, seed=0):
         new_x = x + 2 * d[0]
         new_y = y + 2 * d[1]
 
-        if correct(new_x, new_y):
+        if correct(new_x // 2, new_y // 2):
             if not maze[new_x // 2][new_y // 2]:
                 yield [x + d[0], y + d[1]]
                 for t in algorithm(maze, x=new_x, y=new_y):

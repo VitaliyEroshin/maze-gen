@@ -9,9 +9,10 @@ class Generator():
 
 
     def resize(self, width, height):
-        self.width = width
-        self.height = height
+        self.width = width // 2
+        self.height = height // 2
         self.maze = [[False] * (width // 2) for _ in range(height // 2)]
+        print(len(self.maze), 'x', len(self.maze[0]))
 
 
     def load_algorithm(self, path):

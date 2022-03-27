@@ -7,11 +7,7 @@ import time
 class MazeGenerator():
     def __init__(self, window_width, window_height, scale):
         self.status ='idle'
-        self.scale = scale
-        self.window_width = window_width
-        self.window_height = window_height
-        self.cells_width = window_width // scale
-        self.cells_height = window_height // scale
+        self.init_settings(window_width, window_height)
 
         self.generator = Generator(self.cells_width - 2, self.cells_height - 2)
 
@@ -20,6 +16,16 @@ class MazeGenerator():
         self.it = self.generator.generate()
         self.root.mainloop()
 
+    
+    def init_settings(self, window_width, window_height):
+        self.wall_thickness = 16
+        self.way_thickness = 24
+        self.scale = (self.wall_thickness + self.way_thickness) // 2
+        self.window_width = window_width
+        self.window_height = window_height
+        self.cells_width = (window_width + self.wall_thickness) // self.scale
+        self.cells_height = (window_height + self.wall_thickness) // self.scale
+        
 
     def make_button(self, frame, text, command):
         return tk.Button(
@@ -61,7 +67,8 @@ class MazeGenerator():
     def draw_cell(self, x, y):
         self.canvas.create_rectangle(
             (x + 1) * self.scale, (y + 1) * self.scale, 
-            (x + 2) * self.scale, (y + 2) * self.scale, 
+            (x + 3) * self.scale - self.wall_thickness, 
+            (y + 3) * self.scale - self.wall_thickness, 
             outline="#a3fff6", 
             fill="#a3fff6"
         )
@@ -125,14 +132,16 @@ class MazeGenerator():
 
         self.canvas.create_rectangle(
             (x + 1) * self.scale, (y + 1) * self.scale, 
-            (x + 2) * self.scale, (y + 2) * self.scale, 
+            (x + 3) * self.scale - self.wall_thickness, 
+            (y + 3) * self.scale - self.wall_thickness, 
             outline="#362700", 
             fill="#362700"
         )
         
         self.icon = self.canvas.create_rectangle(
             (x + 1) * self.scale, (y + 1) * self.scale, 
-            (x + 2) * self.scale, (y + 2) * self.scale, 
+            (x + 3) * self.scale - self.wall_thickness, 
+            (y + 3) * self.scale - self.wall_thickness, 
             outline="#fcba03", 
             fill="#fcba03"
         )
@@ -175,7 +184,8 @@ class MazeGenerator():
     def find_path(self, x=1, y=1, parentx=0, parenty=0):
         way = self.canvas.create_rectangle(
             (x) * self.scale, (y) * self.scale, 
-            (x + 1) * self.scale, (y + 1) * self.scale, 
+            (x + 2) * self.scale - self.wall_thickness, 
+            (y + 2) * self.scale - self.wall_thickness, 
             outline="#00ad37", 
             fill="#00ad37"
         )
@@ -201,4 +211,4 @@ class MazeGenerator():
         return False
 
 
-g = MazeGenerator(640, 480, 16)
+g = MazeGenerator(640, 480, 8)
