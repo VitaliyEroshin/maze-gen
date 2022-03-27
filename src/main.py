@@ -46,7 +46,8 @@ class MazeGenerator():
         self.wall_thickness = wall_thickness
         self.way_thickness = max(way_thickness, wall_thickness)
         self.scale = (self.wall_thickness + self.way_thickness) // 2
-        
+
+
     def setup_window(self):
         def make_button(text, command):
             return tk.Button(
@@ -57,6 +58,7 @@ class MazeGenerator():
                 height=1,
                 width=7
             ).pack(side="top")
+
 
         def make_scaler(minimum, maximum):
             return tk.Scale(
@@ -69,6 +71,7 @@ class MazeGenerator():
                 background="#242424",
                 width=8
             )
+
 
         self.root = tk.Tk()
         self.root.title("Maze generator")
@@ -158,7 +161,7 @@ class MazeGenerator():
             return
 
         try:
-            for i in range(2 ** self.speed_scale.get()):
+            for _ in range(2 ** self.speed_scale.get()):
                 pos = next(self.it)
                 self.draw_cell(pos[1], pos[0])
                 self.level[pos[0] + 1][pos[1] + 1] = True
