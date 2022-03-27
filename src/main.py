@@ -164,10 +164,12 @@ class MazeGenerator():
 
     
     def change_algorithm(self):
-        if self.generator.algo.__name__ == 'algorithms.kruskal':
-            self.generator.load_algorithm('algorithms.dfs')
-        else:
-            self.generator.load_algorithm('algorithms.kruskal')
+        filenames = tkinter.filedialog.askopenfilename()
+        if not filenames:
+            return
+        
+        self.generator.load_algorithm(filenames)
+        self.reset()
 
 
     def find_path(self, x=1, y=1, parentx=0, parenty=0):
