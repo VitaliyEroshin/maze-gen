@@ -106,13 +106,13 @@ class MazeGenerator():
         self.frame.pack(side="top")
 
 
-    def draw_cell(self, x, y):
-        self.canvas.create_rectangle(
+    def draw_cell(self, x, y, color="#ffffff"):
+        return self.canvas.create_rectangle(
             (x + 1) * self.scale, (y + 1) * self.scale, 
             (x + 3) * self.scale - self.wall_thickness, 
             (y + 3) * self.scale - self.wall_thickness, 
-            outline="#ffffff", 
-            fill="#ffffff"
+            outline=color, 
+            fill=color
         )
 
 
@@ -176,21 +176,9 @@ class MazeGenerator():
         if self.icon:
             self.canvas.delete(self.icon)
 
-        self.canvas.create_rectangle(
-            (x + 1) * self.scale, (y + 1) * self.scale, 
-            (x + 3) * self.scale - self.wall_thickness, 
-            (y + 3) * self.scale - self.wall_thickness, 
-            outline="#362700", 
-            fill="#362700"
-        )
+        self.draw_cell(x, y, "#362700")
         
-        self.icon = self.canvas.create_rectangle(
-            (x + 1) * self.scale, (y + 1) * self.scale, 
-            (x + 3) * self.scale - self.wall_thickness, 
-            (y + 3) * self.scale - self.wall_thickness, 
-            outline="#fcba03", 
-            fill="#fcba03"
-        )
+        self.icon = self.draw_cell(x, y, "#fcba03")
 
         self.player = [x, y]
 
@@ -228,13 +216,7 @@ class MazeGenerator():
 
 
     def find_path(self, x=1, y=1, parentx=0, parenty=0):
-        way = self.canvas.create_rectangle(
-            (x) * self.scale, (y) * self.scale, 
-            (x + 2) * self.scale - self.wall_thickness, 
-            (y + 2) * self.scale - self.wall_thickness, 
-            outline="#00ad37", 
-            fill="#00ad37"
-        )
+        way = self.draw_cell(x - 1, y - 1, "#00ad37")
 
         if x == self.cells_width - 3 and y == self.cells_height - 3:
             return True
