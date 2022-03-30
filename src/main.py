@@ -125,7 +125,7 @@ class MazeGenerator():
         self.init_settings(self.wall_thick.get(), self.way_thick.get())
         self.resize_canvas(self.window_width, self.window_height)
         self.status = 'running'
-        self.level = [[False] * (self.cells_width - 2) for _ in range(self.cells_height - 2)]
+        self.level = [[False] * (self.cells_width - 1) for _ in range(self.cells_height - 1)]
         self.reset()
         self.go()
 
