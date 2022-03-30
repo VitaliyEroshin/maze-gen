@@ -12,7 +12,7 @@ class MazeGenerator():
 
         self.generator = Generator()
 
-        self.init_settings(16, 32)
+        self.init_settings(1, 1)
         self.resize_canvas(window_width, window_height)
 
         self.setup_window()
@@ -108,6 +108,10 @@ class MazeGenerator():
             Initializes scales (aka sliders)
         """
 
+        slider_length = 90
+        slider_width = 8
+        font_size = 11
+
         def make_scaler(minimum, maximum, frame):
             return tk.Scale(
                 frame,
@@ -115,10 +119,10 @@ class MazeGenerator():
                 to=maximum,
                 orient="horizontal",
                 resolution=1,
-                length=90,
+                length=slider_length,
                 background=background_color,
                 fg=font_color,
-                width=8,
+                width=slider_width,
                 showvalue=0
             )
 
@@ -127,10 +131,9 @@ class MazeGenerator():
             return tk.Label(
                 frame, 
                 text=text, 
-                font=('', 11, ''), 
+                font=('', font_size, ''), 
                 fg=font_color, 
                 background=background_color,
-                padx=0
             ).pack()
 
 
@@ -458,7 +461,7 @@ class MazeGenerator():
             Just average BFS maze walkaround,
             yielding coordinates and depth.
         """
-        
+
         delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
 
         bfs = Queue()
