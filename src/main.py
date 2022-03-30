@@ -22,7 +22,6 @@ class MazeGenerator():
 
     def on_resize(self, event):
 
-        #print(self.frame.winfo_width(), self.frame.winfo_height())
         self.canvas.config(
             width=(self.root.winfo_width() - self.frame.winfo_width() - 6), 
             height=(self.root.winfo_height() - 6)
@@ -51,52 +50,21 @@ class MazeGenerator():
         self.scale = (self.wall_thickness + self.way_thickness) // 2
 
 
-    def setup_window(self):
+    def init_buttons(self, background_color, font_color):
         def make_button(text, command):
             return tk.Button(
                 self.button_frame,
                 text=text,
                 command=command,
-                highlightbackground="#242424",
+                highlightbackground=background_color,
                 height=1,
                 width=7,
-                fg='white',
-                bg='black'
+                fg=font_color,
             ).pack(side="top")
 
 
-        def make_scaler(minimum, maximum, frame):
-            return tk.Scale(
-                frame,
-                from_=minimum,
-                to=maximum,
-                orient="horizontal",
-                resolution=1,
-                length=90,
-                background="#242424",
-                fg='white',
-                width=8,
-                showvalue=0
-            )
+        self.button_frame = tk.Frame(self.frame, pady=32, background=background_color)
 
-        def make_label(text, frame):
-            return tk.Label(frame, text=text, font=('', 11, ''), fg='white', background="#242424", padx=0).pack()
-
-        self.root = tk.Tk()
-        self.root.title("Maze generator")
-        self.root.configure(background="#242424")
-
-        self.canvas = tk.Canvas(
-            self.root, 
-            height=self.window_height, 
-            width=self.window_width,
-            background="#333333",
-            highlightbackground="black"
-        )
-
-        self.canvas.pack(side="right")
-        self.frame = tk.Frame(self.root, padx=2, pady=0, background="#242424")
-        self.button_frame = tk.Frame(self.frame, pady=32, background="#242424")
         make_button("Run", self.start)
         make_button("Stop", self.stop)
         make_button("Reset", self.reset)
@@ -105,25 +73,74 @@ class MazeGenerator():
         make_button("Algorithm", self.change_algorithm)
         make_button("Path", self.find_path)
         
-        wall_thickness_frame = tk.Frame(self.frame, pady=8, background="#242424")
-        way_thickness_frame = tk.Frame(self.frame, pady=8, background="#242424")
-        speed_frame = tk.Frame(self.frame, pady=8, background="#242424")
-
         self.button_frame.pack()
-        self.wall_thick = make_scaler(2, 32, wall_thickness_frame)
-        self.way_thick = make_scaler(2, 32, way_thickness_frame)
-        self.speed_scale = make_scaler(0, 10, speed_frame)
 
-        make_label("wall thickness", wall_thickness_frame)
-        self.wall_thick.pack()
-        make_label("way thickness", way_thickness_frame)
-        self.way_thick.pack()
-        make_label("speed", speed_frame)
-        self.speed_scale.pack()
 
-        wall_thickness_frame.pack()
-        way_thickness_frame.pack()
-        speed_frame.pack()
+    def init_scales(self, background_color, font_color):
+        def make_scaler(minimum, maximum, frame):
+            return tk.Scale(
+                frame,
+                from_=minimum,
+                to=maximum,
+                orient="horizontal",
+                resolution=1,
+                length=90,
+                background=background_color,
+                fg=font_color,
+                width=8,
+                showvalue=0
+            )
+
+
+        def make_label(text, frame):
+            return tk.Label(
+                frame, 
+                text=text, 
+                font=('', 11, ''), 
+                fg=font_color, 
+                background=background_color,
+                padx=0
+            ).pack()
+
+
+        def init_scale(label, minimum, maximum):
+            frame = tk.Frame(self.frame, pady=8, background=background_color)
+            scaler = make_scaler(minimum, maximum, frame)
+            make_label(label, frame)
+            scaler.pack()
+            frame.pack()
+            return scaler
+            
+
+        self.wall_thick = init_scale("wall thickness", 2, 32)
+        self.way_thick = init_scale("way thickness", 2, 32)
+        self.speed_scale = init_scale("speed", 0, 10)
+
+
+    def setup_window(self):
+        background_color = "#242424"
+        font_color = 'white'
+        maze_background_color = '#333333'
+
+        self.root = tk.Tk()
+        self.root.title("Maze generator")
+        self.root.configure(background=background_color)
+
+        self.canvas = tk.Canvas(
+            self.root, 
+            height=self.window_height, 
+            width=self.window_width,
+            background=maze_background_color,
+            highlightbackground="black"
+        )
+
+        self.canvas.pack(side="right")
+
+        self.frame = tk.Frame(self.root, padx=2, pady=0, background=background_color)
+        
+        self.init_buttons(background_color, font_color)
+        self.init_scales(background_color, font_color)
+        
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
         self.frame.pack(side="top")
