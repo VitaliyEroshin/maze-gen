@@ -3,7 +3,8 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
 import time
-
+from queue import Queue
+import colors
 
 class MazeGenerator():
     def __init__(self, window_width, window_height, scale):
@@ -59,7 +60,8 @@ class MazeGenerator():
                 highlightbackground=background_color,
                 height=1,
                 width=7,
-                fg=font_color,
+                fg='black',
+                background='black'
             ).pack(side="top")
 
 
@@ -72,6 +74,7 @@ class MazeGenerator():
         make_button("Play", self.play)
         make_button("Algorithm", self.change_algorithm)
         make_button("Path", self.find_path)
+        make_button("Paint", self.start_painting)
         
         self.button_frame.pack()
 
@@ -118,9 +121,10 @@ class MazeGenerator():
 
 
     def setup_window(self):
-        background_color = "#242424"
+        background_color = '#242424'
         font_color = 'white'
         maze_background_color = '#333333'
+        border_color = 'black'
 
         self.root = tk.Tk()
         self.root.title("Maze generator")
@@ -131,7 +135,7 @@ class MazeGenerator():
             height=self.window_height, 
             width=self.window_width,
             background=maze_background_color,
-            highlightbackground="black"
+            highlightbackground=border_color
         )
 
         self.canvas.pack(side="right")
@@ -259,7 +263,7 @@ class MazeGenerator():
         self.reset()
 
 
-    def find_path(self, x=0, y=0, parentx=0, parenty=0):
+    def find_path(self, x=0, y=0):
         
         delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
 
@@ -303,6 +307,60 @@ class MazeGenerator():
                 cells_stack.pop()
                 self.canvas.delete(cell)
 
+
+    def start_painting(self):
+        self.status = 'painting'
+        self.paint_it = self.paintGenerator()
+        self.paint()
+
+
+    def paint(self):
+        if self.status != 'painting':
+            return
+
+        try:
+            pos, time = next(self.paint_it)
+            self.draw_cell(pos[0], pos[1], colors.get_color(time))
+            current_time = time
+            while current_time == time:
+                pos, current_time = next(self.paint_it)
+                self.draw_cell(pos[0], pos[1], colors.get_color(current_time))
+
+            self.canvas.update()
+            self.root.after(5, self.paint)
+        except:
+            self.canvas.update()
+            self.status = 'idle'
+
+
+    def paintGenerator(self, x=0, y=0):
+        delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
+
+        bfs = Queue()
+        bfs.put(((x, y), 0))
+        visited = [[False] * (self.finish_x + 2) for _ in range(self.finish_y + 2)]
+
+        while not bfs.empty():
+           
+            pos, time = bfs.get()
+
+            yield (pos, time)
             
+            for d in delta:
+                nx = pos[0] + d[0]
+                ny = pos[1] + d[1]
+                
+                if visited[nx][ny]:
+                    continue
+
+                if ny > self.finish_x or nx > self.finish_y or ny < 0 or nx < 0:
+                    continue
+
+                if not self.level[ny + 1][nx + 1]:
+                    continue
+
+                bfs.put(((nx, ny), time + 1))
+                visited[nx][ny] = True
+
 
 g = MazeGenerator(640, 480, 8)
