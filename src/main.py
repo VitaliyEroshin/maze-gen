@@ -120,6 +120,8 @@ class MazeGenerator():
 
 
     def start(self):
+        self.finish_x = 0
+        self.finish_y = 0
         self.init_settings(self.wall_thick.get(), self.way_thick.get())
         self.resize_canvas(self.window_width, self.window_height)
         self.status = 'running'
@@ -164,6 +166,8 @@ class MazeGenerator():
             for _ in range(2 ** self.speed_scale.get()):
                 pos = next(self.it)
                 self.draw_cell(pos[1], pos[0])
+                self.finish_x = max(self.finish_x, pos[0])
+                self.finish_y = max(self.finish_y, pos[1])
                 self.level[pos[0] + 1][pos[1] + 1] = True
                 
             self.canvas.update()
@@ -218,31 +222,50 @@ class MazeGenerator():
         self.reset()
 
 
-    def find_path(self, x=1, y=1, parentx=0, parenty=0):
-        way = self.draw_cell(x - 1, y - 1, "#00ad37")
-
-        if x == self.cells_width - 3 and y == self.cells_height - 3:
-            return True
-
+    def find_path(self, x=0, y=0, parentx=0, parenty=0):
+        
         delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
-        for d in delta:
-            nx = x + d[0]
-            ny = y + d[1]
 
-            if nx == parentx and ny == parenty:
-                continue
+        cells_stack = []
+        stack = []
 
-            if ny == len(self.level) or nx == len(self.level[0]):
-                continue
+        cells_stack.append(self.draw_cell(x, y, "#00ad37"))
+        stack.append((x, y))
+        visited = set()
+
+        while len(stack):
+            pos = stack[-1]
+            cell = cells_stack[-1]
             
-            if not self.level[ny][nx]:
-                continue
-            
-            if (self.find_path(nx, ny, x, y)):
-                return True
-    
-        self.canvas.delete(way)
-        return False
+            visited.add(pos)
 
+            if pos[0] == self.finish_y and pos[1] == self.finish_x:
+                return
+            
+            processed = True
+            for d in delta:
+                nx = pos[0] + d[0]
+                ny = pos[1] + d[1]
+                
+                if (nx, ny) in visited:
+                    continue
+
+                if ny > self.finish_x or nx > self.finish_y or ny < 0 or nx < 0:
+                    continue
+                
+                if not self.level[ny + 1][nx + 1]:
+                    continue
+                
+                stack.append((nx, ny))
+                cells_stack.append(self.draw_cell(nx, ny, "#00ad37"))
+                processed = False
+                break
+
+            if processed:
+                stack.pop()
+                cells_stack.pop()
+                self.canvas.delete(cell)
+
+            
 
 g = MazeGenerator(640, 480, 8)
