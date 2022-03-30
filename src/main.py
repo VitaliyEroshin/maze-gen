@@ -1,5 +1,6 @@
 from generation.generator import Generator
 import tkinter as tk
+from tkinter import ttk
 import tkinter.filedialog
 import time
 
@@ -20,8 +21,10 @@ class MazeGenerator():
 
 
     def on_resize(self, event):
+
+        #print(self.frame.winfo_width(), self.frame.winfo_height())
         self.canvas.config(
-            width=(self.root.winfo_width() - 93), 
+            width=(self.root.winfo_width() - self.frame.winfo_width() - 6), 
             height=(self.root.winfo_height() - 6)
         )
 
@@ -51,27 +54,33 @@ class MazeGenerator():
     def setup_window(self):
         def make_button(text, command):
             return tk.Button(
-                self.frame,
+                self.button_frame,
                 text=text,
                 command=command,
                 highlightbackground="#242424",
                 height=1,
-                width=7
+                width=7,
+                fg='white',
+                bg='black'
             ).pack(side="top")
 
 
-        def make_scaler(minimum, maximum):
+        def make_scaler(minimum, maximum, frame):
             return tk.Scale(
-                self.frame,
+                frame,
                 from_=minimum,
                 to=maximum,
                 orient="horizontal",
                 resolution=1,
-                length=64,
+                length=90,
                 background="#242424",
-                width=8
+                fg='white',
+                width=8,
+                showvalue=0
             )
 
+        def make_label(text, frame):
+            return tk.Label(frame, text=text, font=('', 11, ''), fg='white', background="#242424", padx=0).pack()
 
         self.root = tk.Tk()
         self.root.title("Maze generator")
@@ -86,8 +95,8 @@ class MazeGenerator():
         )
 
         self.canvas.pack(side="right")
-        self.frame = tk.Frame(self.root, padx=10, pady=10, background="#242424")
-
+        self.frame = tk.Frame(self.root, padx=2, pady=0, background="#242424")
+        self.button_frame = tk.Frame(self.frame, pady=32, background="#242424")
         make_button("Run", self.start)
         make_button("Stop", self.stop)
         make_button("Reset", self.reset)
@@ -95,15 +104,26 @@ class MazeGenerator():
         make_button("Play", self.play)
         make_button("Algorithm", self.change_algorithm)
         make_button("Path", self.find_path)
+        
+        wall_thickness_frame = tk.Frame(self.frame, pady=8, background="#242424")
+        way_thickness_frame = tk.Frame(self.frame, pady=8, background="#242424")
+        speed_frame = tk.Frame(self.frame, pady=8, background="#242424")
 
-        self.wall_thick = make_scaler(2, 32)
-        self.way_thick = make_scaler(2, 32)
-        self.speed_scale = make_scaler(0, 10)
+        self.button_frame.pack()
+        self.wall_thick = make_scaler(2, 32, wall_thickness_frame)
+        self.way_thick = make_scaler(2, 32, way_thickness_frame)
+        self.speed_scale = make_scaler(0, 10, speed_frame)
 
+        make_label("wall thickness", wall_thickness_frame)
         self.wall_thick.pack()
+        make_label("way thickness", way_thickness_frame)
         self.way_thick.pack()
+        make_label("speed", speed_frame)
         self.speed_scale.pack()
 
+        wall_thickness_frame.pack()
+        way_thickness_frame.pack()
+        speed_frame.pack()
         self.frame.bind('<KeyPress>', self.key_handler)
         self.frame.focus_set()
         self.frame.pack(side="top")
