@@ -22,6 +22,11 @@ class MazeGenerator():
 
 
     def on_resize(self, event):
+        """
+            Generally, this function is called everytime
+            when app window is being resized. It just
+            twinks canvas size and resets the maze.
+        """
 
         self.canvas.config(
             width=(self.root.winfo_width() - self.frame.winfo_width() - 6), 
@@ -37,6 +42,12 @@ class MazeGenerator():
 
 
     def resize_canvas(self, window_width, window_height):
+        """
+            This function twinks maze inner size (in cells)
+            It calculate how many cells can be placed in
+            canvas.
+        """
+
         self.window_width = window_width
         self.window_height = window_height
         self.cells_width = (window_width + self.wall_thickness) // self.scale
@@ -46,12 +57,21 @@ class MazeGenerator():
 
 
     def init_settings(self, wall_thickness, way_thickness):
+        """
+            Updates thicknesses, does not let way thickness be
+            less, than wall thickness. Also recalculates scale.
+        """
+
         self.wall_thickness = wall_thickness
         self.way_thickness = max(way_thickness, wall_thickness)
         self.scale = (self.wall_thickness + self.way_thickness) // 2
 
 
     def init_buttons(self, background_color, font_color):
+        """
+            Initializes UI buttons.
+        """
+
         def make_button(text, command):
             return tk.Button(
                 self.button_frame,
@@ -65,7 +85,11 @@ class MazeGenerator():
             ).pack(side="top")
 
 
-        self.button_frame = tk.Frame(self.frame, pady=32, background=background_color)
+        self.button_frame = tk.Frame(
+            self.frame, 
+            pady=32, 
+            background=background_color
+        )
 
         make_button("Run", self.start)
         make_button("Stop", self.stop)
@@ -80,6 +104,10 @@ class MazeGenerator():
 
 
     def init_scales(self, background_color, font_color):
+        """
+            Initializes scales (aka sliders)
+        """
+
         def make_scaler(minimum, maximum, frame):
             return tk.Scale(
                 frame,
@@ -107,7 +135,12 @@ class MazeGenerator():
 
 
         def init_scale(label, minimum, maximum):
-            frame = tk.Frame(self.frame, pady=8, background=background_color)
+            frame = tk.Frame(
+                self.frame, 
+                pady=8, 
+                background=background_color
+            )
+
             scaler = make_scaler(minimum, maximum, frame)
             make_label(label, frame)
             scaler.pack()
@@ -121,6 +154,11 @@ class MazeGenerator():
 
 
     def setup_window(self):
+        """
+            Bakes user interface things: root, canvas, frames, 
+            buttons, sliders.
+        """
+
         background_color = '#242424'
         font_color = 'white'
         maze_background_color = '#333333'
@@ -140,7 +178,12 @@ class MazeGenerator():
 
         self.canvas.pack(side="right")
 
-        self.frame = tk.Frame(self.root, padx=2, pady=0, background=background_color)
+        self.frame = tk.Frame(
+            self.root, 
+            padx=2, 
+            pady=0, 
+            background=background_color
+        )
         
         self.init_buttons(background_color, font_color)
         self.init_scales(background_color, font_color)
@@ -151,6 +194,10 @@ class MazeGenerator():
 
 
     def draw_cell(self, x, y, color="#ffffff"):
+        """ 
+            Drawing the cell by creating rectangle on canvas.
+        """
+
         return self.canvas.create_rectangle(
             (x + 1) * self.scale, (y + 1) * self.scale, 
             (x + 3) * self.scale - self.wall_thickness, 
@@ -161,6 +208,10 @@ class MazeGenerator():
 
 
     def start(self):
+        """
+            Start maze generation process.
+        """
+
         self.finish_x = 0
         self.finish_y = 0
         self.init_settings(self.wall_thick.get(), self.way_thick.get())
@@ -172,16 +223,40 @@ class MazeGenerator():
 
 
     def stop(self):
+        """
+            Stops whatever is running now: generation or painting.
+        """
+
         self.status = 'idle'
 
 
     def reset(self):
+        """
+            Resets the canvas by deleting all cells,
+            creates new generator.
+        """
+
         self.it = self.generator.generate()
         self.generator.clear()
         self.canvas.delete('all')
 
 
     def save(self):
+        """
+            Asks user for a path and saves maze as .txt file.
+
+            Sample of how saved maze will look like:
+
+            #######
+            # #   #
+            # # ###
+            # #   #
+            # ### #
+            #     #
+            #######
+
+        """
+
         path = tk.filedialog.asksaveasfilename(
             defaultextension='.txt', filetypes=[("txt file", '*.txt')],
             initialdir='./',
@@ -200,6 +275,12 @@ class MazeGenerator():
 
 
     def go(self):
+        """
+            Core function of maze generation. Accepts 
+            position from generator (aka algorithm) and
+            draws the cell.
+        """
+
         if self.status != 'running':
             return
 
@@ -218,6 +299,11 @@ class MazeGenerator():
 
 
     def move_player(self, x, y):
+        """
+            Moves player to (x, y) if it is possible.
+            If it's not, just ignores the movement.
+        """
+
         if not self.level[y + 1][x + 1]:
             return
 
@@ -232,6 +318,10 @@ class MazeGenerator():
 
 
     def play(self):
+        """
+            Initializes play process.
+        """
+
         self.status = 'playing'
         self.player = None
         self.icon = None
@@ -239,11 +329,22 @@ class MazeGenerator():
 
 
     def key_handler(self, key):
+        """
+            Passes key to the right function,
+            based on current status.
+            (aka Chain of Responsibility pattern)
+        """
+
         if self.status == 'playing':
             self.player_move_handler(key)
 
 
     def player_move_handler(self, key):
+        """
+            Parse player movement key and move to
+            the next location.
+        """
+
         if key.keysym == 'Left':
             self.move_player(self.player[0] - 1, self.player[1])
         elif key.keysym == 'Right':
@@ -255,6 +356,11 @@ class MazeGenerator():
 
     
     def change_algorithm(self):
+        """
+            Ask user to choose file with algorithm
+            and import it.
+        """
+
         filenames = tkinter.filedialog.askopenfilename()
         if not filenames:
             return
@@ -264,7 +370,11 @@ class MazeGenerator():
 
 
     def find_path(self, x=0, y=0):
-        
+        """ 
+            Search for the maze solution. Search is DFS
+            based on stack (max recursion depth is too little)
+        """
+         
         delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
 
         cells_stack = []
@@ -309,12 +419,22 @@ class MazeGenerator():
 
 
     def start_painting(self):
+        """
+            Initiates painting process.
+        """
+
         self.status = 'painting'
         self.paint_it = self.paintGenerator()
         self.paint()
 
 
     def paint(self):
+        """ 
+            Core painting function. Accepts coordinates
+            from bfs generator, calculates the color 
+            (time dependent) and draws the cell.
+        """
+
         if self.status != 'painting':
             return
 
@@ -334,6 +454,11 @@ class MazeGenerator():
 
 
     def paintGenerator(self, x=0, y=0):
+        """
+            Just average BFS maze walkaround,
+            yielding coordinates and depth.
+        """
+        
         delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
 
         bfs = Queue()
