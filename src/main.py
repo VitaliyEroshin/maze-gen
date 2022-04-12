@@ -79,9 +79,7 @@ class MazeGenerator():
                 command=command,
                 highlightbackground=background_color,
                 height=1,
-                width=7,
-                fg='black',
-                background='black'
+                width=7
             ).pack(side="top")
 
 
