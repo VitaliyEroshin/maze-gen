@@ -93,6 +93,7 @@ class MazeGenerator():
         make_button("Stop", self.stop)
         make_button("Reset", self.reset)
         make_button("Save", self.save)
+        make_button("Load", self.load_labyrinth)
         make_button("Play", self.play)
         make_button("Algorithm", self.change_algorithm)
         make_button("Path", self.find_path)
@@ -487,6 +488,36 @@ class MazeGenerator():
 
                 bfs.put(((nx, ny), time + 1))
                 visited[nx][ny] = True
+
+    def load_labyrinth(self):
+        """
+            Ask user to choose file with labyrinth
+            and load it.
+        """
+
+        filenames = tkinter.filedialog.askopenfilename()
+        if not filenames:
+            return
+        
+        self.reset()
+        maze = None
+        with open(filenames) as f:
+            maze = f.read().splitlines()
+
+        self.way_thick.set( self.window_width // (len(maze[0]) + 2) )
+
+        self.wall_thick.set( self.window_height // (len(maze) + 2) )
+
+        self.init_settings(self.wall_thick.get(), self.way_thick.get())
+
+        self.cells_height = len(maze)
+        self.cells_width = len(maze[0])
+
+
+        for i in range(self.cells_height):
+            for j in range(self.cells_width):
+                if maze[i][j] == '#':
+                    self.draw_cell(j, i)
 
 
 g = MazeGenerator(640, 480, 8)
