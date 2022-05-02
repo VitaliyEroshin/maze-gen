@@ -84,13 +84,18 @@ class MazeGenerator():
         """
 
         def make_button(text, command):
-            return tk.Button(
+            style = ttk.Style()
+            style.configure(
+                'MenuButton.TButton', 
+                background=background_color,
+            )
+
+            return ttk.Button(
                 self.button_frame,
                 text=text,
                 command=command,
-                highlightbackground=background_color,
-                height=1,
-                width=7
+                style='MenuButton.TButton',
+                width=14
             ).pack(side="top")
 
 
@@ -100,14 +105,14 @@ class MazeGenerator():
             background=background_color
         )
 
-        make_button("Run", self.start)
+        make_button("Generate", self.start)
         make_button("Stop", self.stop)
         make_button("Reset", self.reset)
         make_button("Save", self.save)
         make_button("Load", self.load_labyrinth)
         make_button("Play", self.play)
-        make_button("Algorithm", self.change_algorithm)
-        make_button("Path", self.find_path)
+        make_button("Change Algo", self.change_algorithm)
+        make_button("Show path", self.find_path)
         make_button("Paint", self.start_painting)
         make_button("Resizable", self.switch_resizable)
         
