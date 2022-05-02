@@ -527,11 +527,13 @@ class MazeGenerator():
         self.cells_height = len(maze)
         self.cells_width = len(maze[0])
 
+        self.level = [[False] * self.cells_width for _ in range(self.cells_height)]
 
         for i in range(self.cells_height):
             for j in range(self.cells_width):
                 if maze[i][j] == ' ':
                     self.draw_cell(j - 1, i - 1)
+                    self.level[i][j] = True
 
 
 g = MazeGenerator(640, 480, 8)
