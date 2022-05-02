@@ -92,6 +92,7 @@ class MazeGenerator():
 
             return ttk.Button(
                 self.button_frame,
+                takefocus=False,
                 text=text,
                 command=command,
                 style='MenuButton.TButton',
