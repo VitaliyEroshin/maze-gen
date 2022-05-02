@@ -385,34 +385,27 @@ class MazeGenerator():
 
     def find_path(self, x=0, y=0):
         """ 
-            Search for the maze solution. Search is DFS
-            based on stack (max recursion depth is too little)
+            Search for the maze solution. Just BFS
         """
-         
-        delta = [[0, -1], [0, 1], [1, 0], [-1, 0]]
 
-        cells_stack = []
-        stack = []
+        previous = {}
+        queue = Queue()
 
-        cells_stack.append(self.draw_cell(x, y, "#00ad37"))
-        stack.append((x, y))
-        visited = set()
+        queue.put([x, y])
 
-        while len(stack):
-            pos = stack[-1]
-            cell = cells_stack[-1]
-            
-            visited.add(pos)
+        while not queue.empty():
+            x, y = queue.get()    
 
-            if pos[0] == self.finish_y and pos[1] == self.finish_x:
-                return
-            
-            processed = True
-            for d in delta:
-                nx = pos[0] + d[0]
-                ny = pos[1] + d[1]
+            if x == self.finish_y and y == self.finish_x:
+                break
+
+            delta = [(0, -1), (0, 1), (1, 0), (-1, 0)]
+
+            for dx, dy in delta:
+                nx = x + dx
+                ny = y + dy
                 
-                if (nx, ny) in visited:
+                if (nx, ny) in previous:
                     continue
 
                 if ny > self.finish_x or nx > self.finish_y or ny < 0 or nx < 0:
@@ -421,15 +414,17 @@ class MazeGenerator():
                 if not self.level[ny + 1][nx + 1]:
                     continue
                 
-                stack.append((nx, ny))
-                cells_stack.append(self.draw_cell(nx, ny, "#00ad37"))
-                processed = False
-                break
+                previous[(nx, ny)] = [x, y]
+            
+                queue.put([nx, ny])
 
-            if processed:
-                stack.pop()
-                cells_stack.pop()
-                self.canvas.delete(cell)
+        x, y = self.finish_y, self.finish_x
+
+        while x != 0 or y != 0:
+            self.draw_cell(x, y, "#2ccc00")
+            x, y = previous[(x, y)]
+
+        self.draw_cell(0, 0, "#2ccc00")
 
 
     def start_painting(self):
