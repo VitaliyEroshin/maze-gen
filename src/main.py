@@ -11,7 +11,8 @@ class MazeGenerator():
         self.status ='idle'
 
         self.generator = Generator()
-
+        
+        self.resizable = False
         self.init_settings(1, 1)
         self.resize_canvas(window_width, window_height)
 
@@ -21,12 +22,22 @@ class MazeGenerator():
         self.root.mainloop()
 
 
+    def switch_resizable(self):
+        """
+            Just switches RESIZABLE flag.
+        """
+        self.resizable = 1 - self.resizable
+
+
     def on_resize(self, event):
         """
             Generally, this function is called everytime
             when app window is being resized. It just
             twinks canvas size and resets the maze.
         """
+        
+        if not self.resizable:
+            return
 
         self.canvas.config(
             width=(self.root.winfo_width() - self.frame.winfo_width() - 6), 
@@ -98,6 +109,7 @@ class MazeGenerator():
         make_button("Algorithm", self.change_algorithm)
         make_button("Path", self.find_path)
         make_button("Paint", self.start_painting)
+        make_button("Resizable", self.switch_resizable)
         
         self.button_frame.pack()
 
@@ -488,6 +500,7 @@ class MazeGenerator():
 
                 bfs.put(((nx, ny), time + 1))
                 visited[nx][ny] = True
+
 
     def load_labyrinth(self):
         """
