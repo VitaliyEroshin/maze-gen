@@ -512,9 +512,9 @@ class MazeGenerator():
         with open(filenames) as f:
             maze = f.read().splitlines()
 
-        self.way_thick.set( self.window_width // (len(maze[0]) + 2) )
+        self.way_thick.set( self.window_width // (len(maze[0])) )
 
-        self.wall_thick.set( self.window_height // (len(maze) + 2) )
+        self.wall_thick.set( self.window_height // (len(maze)) )
 
         self.init_settings(self.wall_thick.get(), self.way_thick.get())
 
@@ -524,8 +524,8 @@ class MazeGenerator():
 
         for i in range(self.cells_height):
             for j in range(self.cells_width):
-                if maze[i][j] == '#':
-                    self.draw_cell(j, i)
+                if maze[i][j] == ' ':
+                    self.draw_cell(j - 1, i - 1)
 
 
 g = MazeGenerator(640, 480, 8)
